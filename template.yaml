@@ -1,0 +1,29 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  MastodonUrl:
+    Description: URL of the target Mastodon instance
+    Type: String
+  MastodonToken:
+    Description: Mastodon API security token
+    Type: String
+
+Resources:
+  DailyWikiPicFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: lambda/
+      Handler: app.lambda_handler
+      Runtime: python3.12
+      MemorySize: 128
+      Timeout: 30
+      Environment:
+        Variables:
+          MASTODON_URL: !Ref MastodonUrl
+          MASTODON_TOKEN: !Ref MastodonToken
+      Events:
+        ScheduleEvent:
+          Type: Schedule
+          Properties:
+            Schedule: cron(0 17 * * ? *)
