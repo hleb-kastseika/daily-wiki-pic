@@ -1,6 +1,6 @@
 # daily-wiki-pic
-This is a small Python bot which fetches the picture of the day from Belarusian Wikipedia and posts it to Mastodon.
-It's implemented as a AWS Lambda function which is scheduled to run daily. Also it can be run locally.
+This is a small Python bot that fetches the picture of the day from Belarusian Wikipedia and posts it to Mastodon.
+It's implemented as an AWS Lambda function which is scheduled to run daily. Also it can be run locally.
 
 ## Requirements
  - Python 3.12 or higher
