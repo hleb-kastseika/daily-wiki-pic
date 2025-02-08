@@ -65,7 +65,9 @@ def _fetch_wikipedia_data():
     media_soup = BeautifulSoup(media_response.content, "html.parser")
     image_tag = media_soup.find("h2", id="Выява_дня").find_next("img")
     if image_tag and "srcset" in image_tag.attrs:
-        image_url = _adjust_image_size("https:" + image_tag["srcset"].split(",")[-1].split(" ")[1])
+        image_url = _adjust_image_size(
+            "https:" + image_tag["srcset"].split(",")[-1].split(" ")[1]
+        )
 
     # Get the caption
     br_tag = img_tag.find_parent("div").find("br")
@@ -139,10 +141,10 @@ def _generate_hashtags(caption):
             messages=[
                 {
                     "role": "user",
-                    "content": f"Generate only {required_amount} relevant English hashtags in common words for posting in social media based on the following image caption:\n\n{caption}\n\nHashtags:"
+                    "content": f"Generate only {required_amount} relevant English hashtags in common words for posting in social media based on the following image caption:\n\n{caption}\n\nHashtags:",
                 }
             ],
-            max_tokens=30
+            max_tokens=30,
         )
         CAPTION_HASHTAGS.update(
             [t for t in response.choices[0].message.content.split() if t.startswith("#")]
