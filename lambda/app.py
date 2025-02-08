@@ -5,6 +5,7 @@ import mimetypes
 import os
 import re
 
+import openai
 import requests
 from bs4 import BeautifulSoup
 from mastodon import Mastodon
@@ -15,9 +16,11 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
 TIMEOUT = 10
+CAPTION_HASHTAGS = {"#Wikipedia", "#Picture"}
 MASTODON = Mastodon(
     access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.environ["MASTODON_URL"]
 )
+OPEN_AI = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 LOGGER = logging.getLogger(__name__)
 
 
@@ -73,6 +76,10 @@ def _fetch_wikipedia_data():
     if image_caption:
         image_caption = image_caption.strip()
 
+        LOGGER.info("Image caption: %s", image_caption)
+        LOGGER.info("Hashtags: %s", _generate_hashtags(image_caption))
+        # image_caption = image_caption + "\n\n" + _generate_hashtags(image_caption)
+
     return image_url, image_caption
 
 
@@ -121,6 +128,29 @@ def _toot(image_url, caption):
         language="be",
         media_ids=[mastodon_media["id"]],
     )
+
+
+def _generate_hashtags(caption):
+    """Generates relevant hashtags in English from the caption."""
+    required_amount = 2
+    try:
+        response = OPEN_AI.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"Generate only {required_amount} relevant English hashtags in common words for posting in social media based on the following image caption:\n\n{caption}\n\nHashtags:"
+                }
+            ],
+            max_tokens=30
+        )
+        CAPTION_HASHTAGS.update(
+            [t for t in response.choices[0].message.content.split() if t.startswith("#")]
+        )
+    except Exception:
+        LOGGER.exception("Failed to get hashtags from AI.")
+
+    return CAPTION_HASHTAGS
 
 
 # For local execution

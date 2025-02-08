@@ -8,6 +8,9 @@ Parameters:
   MastodonToken:
     Description: Mastodon API security token
     Type: String
+  OpenaiApiKey:
+    Description: OpenAI API key
+    Type: String
 
 Resources:
   DailyWikiPicFunction:
@@ -22,6 +25,7 @@ Resources:
         Variables:
           MASTODON_URL: !Ref MastodonUrl
           MASTODON_TOKEN: !Ref MastodonToken
+          OPENAI_API_KEY: !Ref OpenaiApiKey
       Events:
         ScheduleEvent:
           Type: Schedule
