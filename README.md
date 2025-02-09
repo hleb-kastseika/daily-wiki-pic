@@ -20,6 +20,7 @@ pip install -r lambda/requirements.txt
 ```bash
 export MASTODON_URL=your_value
 export MASTODON_TOKEN=your_value
+export OPENAI_API_KEY=your_value
 ```
  4 run the script:
 ```bash
