@@ -21,6 +21,7 @@ MASTODON = Mastodon(
     access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.environ["MASTODON_URL"]
 )
 OPEN_AI = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
 
 
