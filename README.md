@@ -1,5 +1,6 @@
 # daily-wiki-pic
 This is a small Python bot that fetches the picture of the day from Belarusian Wikipedia and posts it to Mastodon.
+It also generates suitable hashtags from the image caption using ChatGPT.
 It's implemented as an AWS Lambda function which is scheduled to run daily. Also it can be run locally.
 
 ## Requirements
