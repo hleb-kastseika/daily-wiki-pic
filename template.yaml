@@ -35,4 +35,4 @@ Resources:
     Type: AWS::Logs::LogGroup
     Properties:
       LogGroupName: !Sub "/aws/lambda/${DailyWikiPicFunction}"
-      RetentionInDays: 15
+      RetentionInDays: 14
