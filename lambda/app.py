@@ -21,8 +21,8 @@ MASTODON = Mastodon(
     access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.environ["MASTODON_URL"]
 )
 OPEN_AI = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-logging.basicConfig(level=logging.INFO)
 LOGGER = logging.getLogger(__name__)
+logging.getLogger().setLevel(logging.INFO)
 
 
 def lambda_handler(_=None, __=None):
@@ -78,10 +78,7 @@ def _fetch_wikipedia_data():
 
     if image_caption:
         image_caption = image_caption.strip()
-
-        LOGGER.info("Image caption: %s", image_caption)
-        LOGGER.info("Hashtags: %s", _generate_hashtags(image_caption))
-        # image_caption = image_caption + "\n\n" + _generate_hashtags(image_caption)
+        image_caption = image_caption + "\n\n" + _generate_hashtags(image_caption)
 
     return image_url, image_caption
 
