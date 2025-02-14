@@ -78,7 +78,7 @@ def _fetch_wikipedia_data():
 
     if image_caption:
         image_caption = image_caption.strip()
-        image_caption = image_caption + "\n\n" + _generate_hashtags(image_caption)
+        image_caption = image_caption + "\n\n" + " ".join(_generate_hashtags(image_caption))
 
     return image_url, image_caption
 
