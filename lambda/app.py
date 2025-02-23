@@ -16,7 +16,7 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
 TIMEOUT = 10
-CAPTION_HASHTAGS = {"#Wikipedia", "#Picture"}
+CAPTION_HASHTAGS = {"#wikipedia"}
 MASTODON = Mastodon(
     access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.environ["MASTODON_URL"]
 )
@@ -132,14 +132,16 @@ def _toot(image_url, caption):
 
 def _generate_hashtags(caption):
     """Generates relevant hashtags in English from the caption."""
-    required_amount = 2
+    hashtag_amount = 2
     try:
         response = OPEN_AI.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[
                 {
                     "role": "user",
-                    "content": f"Generate only {required_amount} relevant English hashtags in common words for posting in social media based on the following image caption:\n\n{caption}\n\nHashtags:",
+                    "content": f"""Generate only {hashtag_amount} relevant English hashtags in common words for posting in social media. 
+                                   If some hashtag is related to a geographical name, such as a country or city, just use that name. 
+                                   It should be based on the following image caption:\n\n{caption}\n\nHashtags:""",
                 }
             ],
             max_tokens=30,
