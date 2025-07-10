@@ -17,9 +17,7 @@ HEADERS = {
 }
 TIMEOUT = 10
 CAPTION_HASHTAGS = {"#wikipedia"}
-MASTODON = Mastodon(
-    access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.environ["MASTODON_URL"]
-)
+MASTODON = Mastodon(access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.environ["MASTODON_URL"])
 OPEN_AI = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 LOGGER = logging.getLogger(__name__)
 logging.getLogger().setLevel(logging.INFO)
@@ -66,9 +64,12 @@ def _fetch_wikipedia_data():
     media_soup = BeautifulSoup(media_response.content, "html.parser")
     image_tag = media_soup.find("h2", id="Выява_дня").find_next("img")
     if image_tag and "srcset" in image_tag.attrs:
-        image_url = _adjust_image_size(
-            "https:" + image_tag["srcset"].split(",")[-1].split(" ")[1]
-        )
+        srcset_items = [item.strip().split(" ") for item in image_tag["srcset"].split(",")]
+        highest_res_url = srcset_items[-1][0] if srcset_items else None
+        if highest_res_url:
+            image_url = _adjust_image_size("https:" + highest_res_url)
+    elif image_tag and "src" in image_tag.attrs:
+        image_url = _adjust_image_size("https:" + image_tag["src"])
 
     # Get the caption
     br_tag = img_tag.find_parent("div").find("br")
@@ -124,7 +125,7 @@ def _toot(image_url, caption):
         return
 
     MASTODON.status_post(
-        status="🖼️ Выява дня: " + caption,
+        status="Выява дня: " + caption,
         language="be",
         media_ids=[mastodon_media["id"]],
     )
@@ -146,9 +147,7 @@ def _generate_hashtags(caption):
             ],
             max_tokens=30,
         )
-        CAPTION_HASHTAGS.update(
-            [t for t in response.choices[0].message.content.split() if t.startswith("#")]
-        )
+        CAPTION_HASHTAGS.update([t for t in response.choices[0].message.content.split() if t.startswith("#")])
     except Exception:
         LOGGER.exception("Failed to get hashtags from AI.")
 
