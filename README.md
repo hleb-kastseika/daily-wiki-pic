@@ -4,7 +4,7 @@ It also generates suitable hashtags from the image caption using ChatGPT.
 It's implemented as an AWS Lambda function which is scheduled to run daily. Also it can be run locally.
 
 ## Requirements
- - Python 3.12 or higher
+ - Python 3.13 or higher
  - AWS SAM
 
 ## How to run locally
