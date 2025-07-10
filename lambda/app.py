@@ -16,7 +16,7 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
 TIMEOUT = 10
-CAPTION_HASHTAGS = {"#wikipedia"}
+CAPTION_HASHTAGS = {"#wikipedia", "photography"}
 MASTODON = Mastodon(access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.environ["MASTODON_URL"])
 OPEN_AI = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 LOGGER = logging.getLogger(__name__)
@@ -133,7 +133,7 @@ def _toot(image_url, caption):
 
 def _generate_hashtags(caption):
     """Generates relevant hashtags in English from the caption."""
-    hashtag_amount = 2
+    hashtag_amount = 4
     try:
         response = OPEN_AI.chat.completions.create(
             model="gpt-3.5-turbo",
