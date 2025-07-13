@@ -16,7 +16,7 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
 }
 TIMEOUT = 10
-CAPTION_HASHTAGS = {"#wikipedia", "photography"}
+CAPTION_HASHTAGS = {"#wikipedia", "#photography"}
 MASTODON = Mastodon(access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.environ["MASTODON_URL"])
 OPEN_AI = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 LOGGER = logging.getLogger(__name__)
@@ -141,7 +141,7 @@ def _generate_hashtags(caption):
                 {
                     "role": "user",
                     "content": f"""Generate only {hashtag_amount} relevant English hashtags in common words for posting in social media. 
-                                   If some hashtag is related to a geographical name, such as a country or city, just use that name. 
+                                   If some hashtag can be related to a specific name of country or city, just use that name. 
                                    It should be based on the following image caption:\n\n{caption}\n\nHashtags:""",
                 }
             ],
