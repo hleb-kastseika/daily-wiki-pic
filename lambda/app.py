@@ -102,13 +102,16 @@ def _get_mime_type(url):
 
 
 def _is_posted(mastodon_media):
-    """Checks that the same image was not posted already last time."""
+    """Checks that the same image was not posted previously."""
     account_id = MASTODON.me()["id"]
-    statuses_response = MASTODON.account_statuses(account_id, limit=1)
-    if len(statuses_response) == 0 or len(statuses_response[0]["media_attachments"]) == 0:
-        return False
+    statuses_response = MASTODON.account_statuses(account_id, limit=40)
 
-    return statuses_response[0]["media_attachments"][0]["blurhash"] == mastodon_media["blurhash"]
+    for status in statuses_response:
+        for media in status.get("media_attachments", []):
+            if media.get("blurhash") == mastodon_media.get("blurhash"):
+                return True
+
+    return False
 
 
 def _toot(image_url, caption):
@@ -121,7 +124,7 @@ def _toot(image_url, caption):
     )
 
     if _is_posted(mastodon_media):
-        LOGGER.error("The image was already posted last time. Image URL: %s", image_url)
+        LOGGER.warning("The image was already posted some time ago. Image URL: %s", image_url)
         return
 
     MASTODON.status_post(
