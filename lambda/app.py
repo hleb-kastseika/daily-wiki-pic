@@ -79,7 +79,6 @@ def _fetch_wikipedia_data():
 
     if image_caption:
         image_caption = image_caption.strip()
-        image_caption = image_caption + "\n\n" + " ".join(_generate_hashtags(image_caption))
 
     return image_url, image_caption
 
@@ -128,7 +127,7 @@ def _toot(image_url, caption):
         return
 
     MASTODON.status_post(
-        status="Выява дня: " + caption,
+        status="Выява дня: " + caption + "\n\n" + " ".join(_generate_hashtags(caption)),
         language="be",
         media_ids=[mastodon_media["id"]],
     )
