@@ -119,11 +119,10 @@ def _toot(image_url, caption):
     mastodon_media = MASTODON.media_post(
         media_file=requests.get(image_url, headers=HEADERS, timeout=TIMEOUT).content,
         mime_type=_get_mime_type(image_url),
-        description=caption,
     )
 
     if _is_posted(mastodon_media):
-        LOGGER.warning("The image was already posted some time ago. Image URL: %s", image_url)
+        LOGGER.info("The image was already posted some time ago. Image URL: %s", image_url)
         return
 
     MASTODON.status_post(
