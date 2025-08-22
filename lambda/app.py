@@ -115,7 +115,6 @@ def _is_posted(mastodon_media):
 
 def _toot(image_url, caption):
     """Publishes image to Mastodon."""
-    LOGGER.info("Publishing image to Mastodon...")
     mastodon_media = MASTODON.media_post(
         media_file=requests.get(image_url, headers=HEADERS, timeout=TIMEOUT).content,
         mime_type=_get_mime_type(image_url),
@@ -125,6 +124,7 @@ def _toot(image_url, caption):
         LOGGER.info("The image was already posted some time ago. Image URL: %s", image_url)
         return
 
+    LOGGER.info("Publishing image to Mastodon...")
     MASTODON.status_post(
         status="Выява дня: " + caption + "\n\n" + " ".join(_generate_hashtags(caption)),
         language="be",
