@@ -124,6 +124,10 @@ def _toot(image_url, caption):
         LOGGER.info("The image was already posted some time ago. Image URL: %s", image_url)
         return
 
+    description = _generate_image_description(image_url)
+    if description is not None:
+        mastodon_media.description = description
+
     LOGGER.info("Publishing image to Mastodon...")
     MASTODON.status_post(
         status="Выява дня: " + caption + "\n\n" + " ".join(_generate_hashtags(caption)),
@@ -153,6 +157,35 @@ def _generate_hashtags(caption):
         LOGGER.exception("Failed to get hashtags from AI.")
 
     return CAPTION_HASHTAGS
+
+
+def _generate_image_description(image_url):
+    """Generates image description in Belarusian."""
+    try:
+        resp = OPEN_AI.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "text",
+                            "text": "Describe this image in 2–3 sentences in Belarusian.",
+                        },
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": image_url},
+                        },
+                    ],
+                },
+            ],
+            max_tokens=250,
+        )
+        return resp.choices[0].message.content
+    except Exception:
+        LOGGER.exception("Failed to get image description from AI.")
+
+    return None
 
 
 # For local execution
