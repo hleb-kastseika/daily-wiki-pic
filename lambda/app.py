@@ -30,8 +30,6 @@ def lambda_handler(_=None, __=None):
         LOGGER.error("Image URL was not found.")
         return
 
-    LOGGER.info("Image URL: %s", image_url)
-    LOGGER.info("Caption: %s", image_caption)
     _toot(image_url, image_caption)
 
 
@@ -170,7 +168,7 @@ def _generate_image_description(image_url):
                     "content": [
                         {
                             "type": "text",
-                            "text": "Describe this image in 2–3 sentences in Belarusian.",
+                            "text": "Describe this image in 2 sentences in Belarusian.",
                         },
                         {
                             "type": "image_url",
