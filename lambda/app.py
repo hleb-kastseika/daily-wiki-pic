@@ -21,6 +21,11 @@ MASTODON = Mastodon(access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.e
 OPEN_AI = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
 LOGGER = logging.getLogger(__name__)
 logging.getLogger().setLevel(logging.INFO)
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.INFO)
+console_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
+if not LOGGER.handlers:
+    LOGGER.addHandler(console_handler)
 
 
 def lambda_handler(_=None, __=None):
@@ -158,7 +163,7 @@ def _generate_hashtags(caption):
 
 
 def _generate_image_description(image_url):
-    """Generates image description in Belarusian."""
+    """Generates image description."""
     try:
         resp = OPEN_AI.chat.completions.create(
             model="gpt-4o-mini",
@@ -168,7 +173,7 @@ def _generate_image_description(image_url):
                     "content": [
                         {
                             "type": "text",
-                            "text": "Describe this image in 2 sentences in Belarusian.",
+                            "text": "Describe this picture in two simple sentences.",
                         },
                         {
                             "type": "image_url",
