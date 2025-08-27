@@ -31,6 +31,8 @@ if not LOGGER.handlers:
 def lambda_handler(_=None, __=None):
     """Handles API Gateway event."""
     image_url, image_caption = _fetch_wikipedia_data()
+    LOGGER.info("Image URL: %s", image_url)
+    LOGGER.info("Image caption: %s", image_caption)
     if image_url is None:
         LOGGER.error("Image URL was not found.")
         return
@@ -124,10 +126,12 @@ def _toot(image_url, caption):
     )
 
     if _is_posted(mastodon_media):
-        LOGGER.info("The image was already posted some time ago. Image URL: %s", image_url)
+        LOGGER.info("The image was already posted some time ago")
         return
 
     description = _generate_image_description(image_url)
+    LOGGER.info("Image description: %s", description)
+
     if description is not None:
         mastodon_media.description = description
 
@@ -141,6 +145,7 @@ def _toot(image_url, caption):
 
 def _generate_hashtags(caption):
     """Generates relevant hashtags in English from the caption."""
+    LOGGER.info("Generating image hashtags...")
     hashtag_amount = 4
     try:
         response = OPEN_AI.chat.completions.create(
@@ -164,29 +169,33 @@ def _generate_hashtags(caption):
 
 def _generate_image_description(image_url):
     """Generates image description."""
+    LOGGER.info("Generating image description...")
     try:
         resp = OPEN_AI.chat.completions.create(
-            model="gpt-4o-mini",
+            model="gpt-4o",
             messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "Ты — асістэнт, які апісвае выявы па-беларуску (кірыліца). "
+                        "Пішы каротка, простымі словамі, без англіцызмаў, без эмодзі. "
+                        "ВЫХАД: роўна два сказы."
+                    ),
+                },
                 {
                     "role": "user",
                     "content": [
-                        {
-                            "type": "text",
-                            "text": "Describe this picture in two simple sentences.",
-                        },
-                        {
-                            "type": "image_url",
-                            "image_url": {"url": image_url},
-                        },
+                        {"type": "text", "text": "Апішы гэтую выяву ў двух простых сказах."},
+                        {"type": "image_url", "image_url": {"url": image_url}},
                     ],
                 },
             ],
-            max_tokens=250,
+            max_tokens=120,
+            temperature=0.2,
         )
         return resp.choices[0].message.content
     except Exception:
-        LOGGER.exception("Failed to get image description from AI.")
+        LOGGER.exception("Failed to generate image description by AI")
 
     return None
 
