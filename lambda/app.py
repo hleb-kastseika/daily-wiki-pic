@@ -133,7 +133,7 @@ def _toot(image_url, caption):
     LOGGER.info("Image description: %s", description)
 
     if description is not None:
-        mastodon_media.description = description
+        MASTODON.media_update(mastodon_media.id, description=description)
 
     LOGGER.info("Publishing image to Mastodon...")
     MASTODON.status_post(
