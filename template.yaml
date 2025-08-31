@@ -26,6 +26,8 @@ Resources:
           MASTODON_URL: !Ref MastodonUrl
           MASTODON_TOKEN: !Ref MastodonToken
           OPENAI_API_KEY: !Ref OpenaiApiKey
+          POWERTOOLS_SERVICE_NAME: DailyWikiPicLambda
+          POWERTOOLS_LOG_LEVEL: INFO
       Events:
         ScheduleEvent:
           Type: Schedule

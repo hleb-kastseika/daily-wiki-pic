@@ -1,12 +1,12 @@
 """AWS Lambda function for daily-wiki-pic bot."""
 
-import logging
 import mimetypes
 import os
 import re
 
 import openai
 import requests
+from aws_lambda_powertools import Logger
 from bs4 import BeautifulSoup
 from mastodon import Mastodon
 
@@ -19,13 +19,7 @@ TIMEOUT = 10
 CAPTION_HASHTAGS = {"#wikipedia", "#photography"}
 MASTODON = Mastodon(access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.environ["MASTODON_URL"])
 OPEN_AI = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
-LOGGER = logging.getLogger(__name__)
-logging.getLogger().setLevel(logging.INFO)
-console_handler = logging.StreamHandler()
-console_handler.setLevel(logging.INFO)
-console_handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
-if not LOGGER.handlers:
-    LOGGER.addHandler(console_handler)
+LOGGER = Logger()
 
 
 def lambda_handler(_=None, __=None):
