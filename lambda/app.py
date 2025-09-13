@@ -155,7 +155,7 @@ def _generate_hashtags(caption):
             max_tokens=30,
         )
         CAPTION_HASHTAGS.update([t for t in response.choices[0].message.content.split() if t.startswith("#")])
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         LOGGER.exception("Failed to get hashtags from AI.")
 
     return CAPTION_HASHTAGS
@@ -188,7 +188,7 @@ def _generate_image_description(image_url):
             temperature=0.2,
         )
         return resp.choices[0].message.content
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         LOGGER.exception("Failed to generate image description by AI")
 
     return None
