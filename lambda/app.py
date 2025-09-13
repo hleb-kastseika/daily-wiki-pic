@@ -18,7 +18,7 @@ HEADERS = {
 TIMEOUT = 10
 CAPTION_HASHTAGS = {"#wikipedia", "#photography"}
 MASTODON = Mastodon(access_token=os.environ["MASTODON_TOKEN"], api_base_url=os.environ["MASTODON_URL"])
-OPEN_AI = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+OPEN_AI = openai.OpenAI(api_key=os.environ["OPENAI_API_KEY"], timeout=180)
 LOGGER = Logger()
 
 
