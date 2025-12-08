@@ -1,5 +1,6 @@
 """AWS Lambda function for daily-wiki-pic bot."""
 
+import base64
 import mimetypes
 import os
 import re
@@ -165,6 +166,15 @@ def _generate_image_description(image_url):
     """Generates image description."""
     LOGGER.info("Generating image description...")
     try:
+        # Download image and convert to base64
+        image_response = requests.get(image_url, headers=HEADERS, timeout=TIMEOUT)
+        image_response.raise_for_status()
+
+        # Encode image as base64
+        image_base64 = base64.b64encode(image_response.content).decode("utf-8")
+        mime_type = _get_mime_type(image_url)
+        data_url = f"data:{mime_type};base64,{image_base64}"
+
         resp = OPEN_AI.chat.completions.create(
             model="gpt-4o",
             messages=[
@@ -180,7 +190,7 @@ def _generate_image_description(image_url):
                     "role": "user",
                     "content": [
                         {"type": "text", "text": "Апішы гэтую выяву ў двух простых сказах."},
-                        {"type": "image_url", "image_url": {"url": image_url}},
+                        {"type": "image_url", "image_url": {"url": data_url}},
                     ],
                 },
             ],
