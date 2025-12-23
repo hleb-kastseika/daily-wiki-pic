@@ -100,12 +100,15 @@ def _get_mime_type(url):
     return mime_type
 
 
-def _is_posted(mastodon_media):
+def _is_posted(mastodon_media, caption):
     """Checks that the same image was not posted previously."""
     account_id = MASTODON.me()["id"]
     statuses_response = MASTODON.account_statuses(account_id, limit=40)
 
     for status in statuses_response:
+        if caption in status.content:
+            return True
+
         for media in status.get("media_attachments", []):
             if media.get("blurhash") == mastodon_media.get("blurhash"):
                 return True
@@ -120,7 +123,7 @@ def _toot(image_url, caption):
         mime_type=_get_mime_type(image_url),
     )
 
-    if _is_posted(mastodon_media):
+    if _is_posted(mastodon_media, caption):
         LOGGER.info("The image was already posted some time ago")
         return
 
