@@ -151,9 +151,21 @@ def _generate_hashtags(caption):
             messages=[
                 {
                     "role": "user",
-                    "content": f"""Generate only {hashtag_amount} relevant English hashtags in common words for posting in social media. 
-                                   If some hashtag can be related to a specific name of country or city, just use that name. 
-                                   It should be based on the following image caption:\n\n{caption}\n\nHashtags:""",
+                    "content": f"""Generate exactly {hashtag_amount} English hashtags for a social media post.
+                    
+                    Rules:
+                    - Return only hashtags, separated by spaces.
+                    - Use simple, literal, common hashtags.
+                    - Prefer single-word hashtags.
+                    - Do not invent poetic, decorative, or promotional hashtags.
+                    - Do not combine place names with other words.
+                    - If a country or city is relevant, use only the plain place name hashtag.
+                    - No explanations.
+
+                    Caption:
+                    {caption}
+                    
+                    Hashtags:""",
                 }
             ],
             max_tokens=30,
