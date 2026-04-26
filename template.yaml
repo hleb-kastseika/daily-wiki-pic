@@ -11,6 +11,9 @@ Parameters:
   OpenaiApiKey:
     Description: OpenAI API key
     Type: String
+  AlarmEmail:
+    Description: Email address to receive error alarm notifications
+    Type: String
 
 Resources:
   DailyWikiPicFunction:
@@ -38,3 +41,36 @@ Resources:
     Properties:
       LogGroupName: !Sub "/aws/lambda/${DailyWikiPicFunction}"
       RetentionInDays: 14
+
+  AlarmTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Protocol: email
+          Endpoint: !Ref AlarmEmail
+
+  ErrorMetricFilter:
+    Type: AWS::Logs::MetricFilter
+    Properties:
+      LogGroupName: !Ref DailyWikiPicFunctionLogGroup
+      FilterPattern: '?ERROR ?[ERROR]'
+      MetricTransformations:
+        - MetricName: DailyWikiPicErrors
+          MetricNamespace: DailyWikiPic
+          MetricValue: "1"
+          DefaultValue: 0
+
+  ErrorAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: DailyWikiPic Lambda function logged an error
+      MetricName: DailyWikiPicErrors
+      Namespace: DailyWikiPic
+      Statistic: Sum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 0
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref AlarmTopic
