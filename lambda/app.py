@@ -118,9 +118,11 @@ def _is_posted(mastodon_media, caption):
 
 def _toot(image_url, caption):
     """Publishes image to Mastodon."""
+    image_response = requests.get(image_url, headers=HEADERS, timeout=TIMEOUT)
+    mime_type = image_response.headers.get("Content-Type", "").split(";")[0].strip() or _get_mime_type(image_url)
     mastodon_media = MASTODON.media_post(
-        media_file=requests.get(image_url, headers=HEADERS, timeout=TIMEOUT).content,
-        mime_type=_get_mime_type(image_url),
+        media_file=image_response.content,
+        mime_type=mime_type,
     )
 
     if _is_posted(mastodon_media, caption):
