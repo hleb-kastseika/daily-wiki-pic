@@ -53,7 +53,7 @@ Resources:
     Type: AWS::Logs::MetricFilter
     Properties:
       LogGroupName: !Ref DailyWikiPicFunctionLogGroup
-      FilterPattern: '?ERROR ?[ERROR]'
+      FilterPattern: "?ERROR ?Error ?error"
       MetricTransformations:
         - MetricName: DailyWikiPicErrors
           MetricNamespace: DailyWikiPic
