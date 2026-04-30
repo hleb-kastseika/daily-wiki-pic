@@ -89,7 +89,9 @@ def _adjust_image_size(url):
     if match:
         pixel_size = int(match.group(1))
         if pixel_size < DESIRED_IMAGE_SIZE:
-            url = re.sub(r"/\d+px-", f"/{DESIRED_IMAGE_SIZE}px-", url)
+            adjusted = re.sub(r"/\d+px-", f"/{DESIRED_IMAGE_SIZE}px-", url)
+            if requests.head(adjusted, headers=HEADERS, timeout=TIMEOUT).ok:
+                return adjusted
 
     return url
 
@@ -119,6 +121,7 @@ def _is_posted(mastodon_media, caption):
 def _toot(image_url, caption):
     """Publishes image to Mastodon."""
     image_response = requests.get(image_url, headers=HEADERS, timeout=TIMEOUT)
+    image_response.raise_for_status()
     mime_type = image_response.headers.get("Content-Type", "").split(";")[0].strip() or _get_mime_type(image_url)
     mastodon_media = MASTODON.media_post(
         media_file=image_response.content,
